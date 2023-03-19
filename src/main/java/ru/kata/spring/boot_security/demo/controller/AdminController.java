@@ -1,6 +1,8 @@
 package ru.kata.spring.boot_security.demo.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.security.core.Authentication;
+import org.springframework.security.core.context.SecurityContextHolder;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.GetMapping;
@@ -12,39 +14,50 @@ import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
-import java.util.ArrayList;
-import java.util.List;
+import java.util.HashSet;
+import java.util.Set;
 
 @Controller
 @RequestMapping("/admin")
 public class AdminController {
 
-    @Autowired
-    private UserService userService;
+    private final UserService userService;
+    private final RoleService roleService;
 
     @Autowired
-    private RoleService roleService;
+    public AdminController(UserService userService, RoleService roleService) {
+        this.userService = userService;
+        this.roleService = roleService;
+    }
 
     @GetMapping
     public String adminPage(Model model) {
-        model.addAttribute("users", userService.listUsers());
+        Authentication auth = SecurityContextHolder.getContext().getAuthentication();
+        User currentUser = (User) auth.getPrincipal();
+
+        model.addAttribute("currentUser", currentUser);
+        model.addAttribute("users", userService.allUsers());
         return "admin";
     }
 
     @GetMapping("/user-create")
     public String createUserPage(Model model) {
         model.addAttribute("user", new User());
-        model.addAttribute("roles", roleService.listRoles());
+        model.addAttribute("roles", roleService.allRoles());
         return "user-create";
     }
 
     @PostMapping("/user-create")
     public String saveCreatedUser(User user) {
-        List<Role> listRoles = new ArrayList<>();
-        for (Role role : user.getRoles()) {
-            listRoles.add(roleService.findRoleByName(role.getName()));
+        Set<Role> allRoles = new HashSet<>();
+
+        if (user.getRoles() != null) {
+            for (Role role : user.getRoles()) {
+                allRoles.add(roleService.findRoleByName(role.getName()));
+            }
         }
-        user.setRoles(listRoles);
+
+        user.setRoles(allRoles);
         userService.saveUser(user);
         return "redirect:/admin";
     }
@@ -53,18 +66,22 @@ public class AdminController {
     public String editUserForm(@RequestParam(required = false, value = "id") Long id
             , Model model) {
         User user = userService.findById(id);
-        model.addAttribute("roles", roleService.listRoles());
+        model.addAttribute("roles", roleService.allRoles());
         model.addAttribute("user", user);
         return "user-edit";
     }
 
     @PostMapping("/user-edit")
     public String editUser(User user) {
-        List<Role> listRoles = new ArrayList<>();
-        for (Role role : user.getRoles()) {
-            listRoles.add(roleService.findRoleByName(role.getName()));
+        Set<Role> allRoles = new HashSet<>();
+
+        if (user.getRoles() != null) {
+            for (Role role : user.getRoles()) {
+                allRoles.add(roleService.findRoleByName(role.getName()));
+            }
         }
-        user.setRoles(listRoles);
+
+        user.setRoles(allRoles);
         userService.updateUser(user);
         return "redirect:/admin";
     }

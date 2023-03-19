@@ -7,29 +7,28 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 import ru.kata.spring.boot_security.demo.dao.UserDao;
 import ru.kata.spring.boot_security.demo.model.User;
-
-import java.util.List;
+import java.util.Set;
 
 @Service
 public class UserServiceImp implements UserService{
 
+    private final UserDao userDao;
+
     @Autowired
-    private UserDao userDao;
+    public UserServiceImp(UserDao userDao) {
+        this.userDao = userDao;
+    }
 
     @Override
-    public List<User> listUsers() {
-        return userDao.listUsers();
+    @Transactional
+    public Set<User> allUsers() {
+        return userDao.allUsers();
     }
 
     @Override
     @Transactional
     public void saveUser(User user) {
         userDao.saveUser(user);
-    }
-
-    @Override
-    public User findByUsername(String username) {
-        return userDao.findByUsername(username);
     }
 
     @Override

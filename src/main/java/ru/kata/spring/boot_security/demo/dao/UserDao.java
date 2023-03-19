@@ -1,12 +1,11 @@
 package ru.kata.spring.boot_security.demo.dao;
 
 import ru.kata.spring.boot_security.demo.model.User;
-
-import java.util.List;
+import java.util.Set;
 
 public interface UserDao {
 
-    List<User> listUsers();
+    Set<User> allUsers();
 
     void saveUser(User user);
 

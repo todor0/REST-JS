@@ -8,34 +8,37 @@ import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
 
 import javax.annotation.PostConstruct;
-import java.util.ArrayList;
 import java.util.Objects;
 import java.util.stream.Collectors;
 
 @Component
 public class Init {
 
+    private final UserService userService;
+    private final RoleService roleService;
+
     @Autowired
-    private UserService userService;
-    @Autowired
-    private RoleService roleService;
+    public Init(UserService userService, RoleService roleService) {
+        this.userService = userService;
+        this.roleService = roleService;
+    }
 
     @PostConstruct
     public void addRolesAndUsers() {
-        if (roleService.listRoles().size() == 0) {
+        if (roleService.allRoles().size() == 0) {
             roleService.save(new Role("ROLE_ADMIN"));
             roleService.save(new Role("ROLE_USER"));
         }
 
-        if (userService.listUsers().size() == 0) {
+        if (userService.allUsers().size() == 0) {
             User admin = new User("admin", "admin","admin@admin.admin");
-            admin.setRoles(roleService.listRoles());
+            admin.setRoles(roleService.allRoles());
             userService.saveUser(admin);
 
             User user = new User("user", "user","user@user.user");
-            user.setRoles(roleService.listRoles().stream()
-                            .filter(role -> Objects.equals(role.getName(), "ROLE_USER"))
-                            .collect(Collectors.toList()));
+            user.setRoles(roleService.allRoles().stream()
+                    .filter(role -> Objects.equals(role.getName(), "ROLE_USER"))
+                    .collect(Collectors.toSet()));
             userService.saveUser(user);
         }
     }

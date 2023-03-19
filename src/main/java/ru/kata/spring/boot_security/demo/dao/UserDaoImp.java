@@ -2,14 +2,16 @@ package ru.kata.spring.boot_security.demo.dao;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.context.annotation.Lazy;
-import org.springframework.security.crypto.bcrypt.BCryptPasswordEncoder;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Repository;
+import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Repository
 public class UserDaoImp implements UserDao{
@@ -17,19 +19,24 @@ public class UserDaoImp implements UserDao{
     @PersistenceContext
     private EntityManager entityManager;
 
+    private final PasswordEncoder passwordEncoder;
+
     @Autowired
-    @Lazy
-    private PasswordEncoder passwordEncoder;
+    public UserDaoImp(@Lazy PasswordEncoder passwordEncoder) {
+        this.passwordEncoder = passwordEncoder;
+    }
 
     @Override
-    public List<User> listUsers() {
-        return entityManager.createQuery("from User", User.class).getResultList();
+    public Set<User> allUsers() {
+        Stream<User> userStream = entityManager.createQuery("from User", User.class).getResultStream();
+
+        return userStream.collect(Collectors.toSet());
     }
 
     @Override
     public void saveUser(User user) {
         user.setPassword(passwordEncoder.encode(user.getPassword()));
-        entityManager.merge(user);
+        entityManager.persist(user);
     }
 
     @Override

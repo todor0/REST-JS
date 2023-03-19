@@ -5,7 +5,9 @@ import ru.kata.spring.boot_security.demo.model.Role;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
-import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 @Repository
 public class RoleDaoImp implements RoleDao{
@@ -14,13 +16,15 @@ public class RoleDaoImp implements RoleDao{
     private EntityManager entityManager;
 
     @Override
-    public List<Role> listRoles() {
-        return entityManager.createQuery("from Role ", Role.class).getResultList();
+    public Set<Role> allRoles() {
+        Stream<Role> roleStream = entityManager.createQuery("from Role ", Role.class).getResultStream();
+
+        return roleStream.collect(Collectors.toSet());
     }
 
     @Override
     public void save(Role role) {
-        if (!(listRoles().contains(role))) {
+        if (!(allRoles().contains(role))) {
             entityManager.persist(role);
         }
     }

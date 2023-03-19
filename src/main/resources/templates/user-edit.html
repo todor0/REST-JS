@@ -1,5 +1,5 @@
 <!DOCTYPE html>
-<html xmlns:th="http://www.thymeleaf.org" lang="en">
+<html xmlns:th="http://www.thymeleaf.org" xmlns="http://www.w3.org/1999/html" lang="en">
 <head>
     <meta charset="UTF-8">
     <title>User edit</title>
@@ -21,8 +21,8 @@
     <label>Roles:
         <input type="checkbox" name="roles"
                th:each="role : ${roles}"
-               th:text="${role.name}"
-               th:value="${role.name}"
+               th:text="${role.toString()}"
+               th:value="${role.getName()}"
                th:checked="${user.roles.contains(role)}"
         />
     </label>

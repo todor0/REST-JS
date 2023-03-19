@@ -5,6 +5,7 @@
     <title>All users</title>
 </head>
 <body>
+<h1 th:text="'Hello, ' + ${currentUser.getUsername()} + '!'"></h1>
 <div th:switch="${users}">
     <h2 th:case="null">There are no users</h2>
     <div th:case="*">
@@ -24,8 +25,8 @@
                 <td th:text="${user.username}">Name</td>
                 <td th:text="${user.email}">E-mail</td>
                 <td>
-                    <th:block th:each="role : ${user.roles}">
-                        <label th:text="${role.authority}"></label>
+                    <th:block th:each="role, iterStat : ${user.roles}">
+                        <label th:text="(!${iterStat.last}) ? ${role.toString()} + ',': ${role.toString()}"> </label>
                     </th:block>
 
                 </td>
