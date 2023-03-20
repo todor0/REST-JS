@@ -9,13 +9,9 @@ import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RequestParam;
-import ru.kata.spring.boot_security.demo.model.Role;
 import ru.kata.spring.boot_security.demo.model.User;
 import ru.kata.spring.boot_security.demo.service.RoleService;
 import ru.kata.spring.boot_security.demo.service.UserService;
-
-import java.util.HashSet;
-import java.util.Set;
 
 @Controller
 @RequestMapping("/admin")
@@ -49,15 +45,6 @@ public class AdminController {
 
     @PostMapping("/user-create")
     public String saveCreatedUser(User user) {
-        Set<Role> allRoles = new HashSet<>();
-
-        if (user.getRoles() != null) {
-            for (Role role : user.getRoles()) {
-                allRoles.add(roleService.findRoleByName(role.getName()));
-            }
-        }
-
-        user.setRoles(allRoles);
         userService.saveUser(user);
         return "redirect:/admin";
     }
@@ -73,15 +60,6 @@ public class AdminController {
 
     @PostMapping("/user-edit")
     public String editUser(User user) {
-        Set<Role> allRoles = new HashSet<>();
-
-        if (user.getRoles() != null) {
-            for (Role role : user.getRoles()) {
-                allRoles.add(roleService.findRoleByName(role.getName()));
-            }
-        }
-
-        user.setRoles(allRoles);
         userService.updateUser(user);
         return "redirect:/admin";
     }
