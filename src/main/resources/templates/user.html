@@ -1,21 +1,107 @@
 <!DOCTYPE html>
-<html xmlns="http://www.w3.org/1999/xhtml" xmlns:th="https://www.thymeleaf.org" xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
+<html xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="https://www.thymeleaf.org"
+      xmlns:sec="http://www.thymeleaf.org/extras/spring-security">
 <head>
-    <title>Profile</title>
+    <!-- Required meta tags -->
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1, shrink-to-fit=no">
+
+    <!-- Bootstrap CSS -->
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.5.0/css/bootstrap.min.css" rel="stylesheet"
+          integrity="sha384-9aIt2nRpC12Uk9gS9baDl411NQApFmC26EwAOH8WgZl5MYYxFfc+NcPb1dKGj7Sk" crossorigin="anonymous">
+
+    <title>Admin panel</title>
 </head>
-    <p th:border="10">Your info:</p>
-        <dl>
-            <dt>Username:</dt>
-            <dd th:text="${user.username}"></dd>
+<body>
 
-            <dt>E-mail:</dt>
-            <dd th:text="${user.email}"></dd>
+<!-- Navigation Bar -->
 
-            <dt>Roles:</dt>
-            <dd th:text="${user.getRoles()}"></dd>
-        </dl>
-    <div sec:authorize="hasRole('ROLE_ADMIN')">
-        <a th:href="@{/admin}"><button>Go to admin page</button></a>
+<nav class="navbar navbar-dark sticky-top bg-dark p-1">
+    <div class="container-fluid">
+            <span class="navbar-brand">
+                <strong th:text="${user.username}"></strong>
+                <span> with roles: </span>
+                <span th:each="role, iterStat : ${user.roles}"
+                      th:text="(!${iterStat.last}) ? ${role.toString()} + ', ': ${role.toString()}"></span>
+            </span>
+        <div>
+            <form action="#" th:action="@{/logout}" method="post">
+                <button class="btn btn-dark btn-secondary" type="submit">Logout</button>
+            </form>
+        </div>
     </div>
-    <p><a th:href="@{/logout}"><button>Logout</button></a></p>
+</nav>
+
+<!-- Page -->
+
+<div class="container-fluid" style="height: 1000px">
+    <div class="row row-cols-2 text-black">
+
+        <!-- Role selector -->
+
+        <div class="col-sm-2 bg-white">
+            <div class="nav flex-column nav-pills pt-4" id="v-pills-tab" role="tablist" aria-orientation="vertical">
+                <a class="nav-link" href="/admin" sec:authorize="hasRole('ROLE_ADMIN')" role="tab"
+                   aria-controls="v-pills-home" aria-selected="false">Admin</a>
+                <a class="nav-link active" href="/user" sec:authorize="hasRole('ROLE_USER')" role="tab"
+                   aria-controls="v-pills-profile" aria-selected="true">User</a>
+            </div>
+        </div>
+
+        <!-- User information-page -->
+
+        <div class="col-10" style="background-color: #f4fafa; height: 1000px">
+            <div class="container-fluid">
+                <div class="container-fluid" style="padding-top: 15px">
+                    <h1>User information-page</h1>
+                </div>
+                <div class="card">
+                    <div class="card-header">
+                        <h3>About user</h3>
+                    </div>
+                    <div class="card-body">
+                        <table class="table table-striped table-hover">
+                            <thead>
+                            <tr>
+                                <th scope="col" class="align-middle">Id</th>
+                                <th scope="col" class="align-middle">Username</th>
+                                <th scope="col" class="align-middle">Email</th>
+                                <th scope="col" class="align-middle">Role</th>
+                            </tr>
+                            </thead>
+                            <tbody>
+                            <tr>
+                                <td th:text="${user.id}"></td>
+                                <td th:text="${user.username}"></td>
+                                <td th:text="${user.email}"></td>
+                                <td>
+                                    <th:block th:each="role, iterStat : ${user.roles}">
+                                        <span class="align-middle"
+                                              th:text="(!${iterStat.last})
+                                              ? ${role.toString()} + ', ': ${role.toString()}">
+                                        </span>
+                                    </th:block>
+                                </td>
+                            </tr>
+                            </tbody>
+                        </table>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </div>
+</div>
+<!-- Optional JavaScript -->
+<!-- jQuery first, then Popper.js, then Bootstrap JS -->
+<script src="https://code.jquery.com/jquery-3.3.1.slim.min.js"
+        integrity="sha384-q8i/X+965DzO0rT7abK41JStQIAqVgRVzpbzo5smXKp4YfRvH+8abtTE1Pi6jizo"
+        crossorigin="anonymous"></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/popper.js/1.14.7/umd/popper.min.js"
+        integrity="sha384-UO2eT0CpHqdSJQ6hJty5KVphtPhzWj9WO1clHTMGa3JDZwrnQq4sF86dIHNDz0W1"
+        crossorigin="anonymous"></script>
+<script src="https://stackpath.bootstrapcdn.com/bootstrap/4.3.1/js/bootstrap.min.js"
+        integrity="sha384-JjSmVgyd0p3pXB1rRibZUAYoIIy6OrQ6VrjIEaFf/nJGzIxFDsf4x0xIM+B07jRM"
+        crossorigin="anonymous"></script>
+</body>
 </html>
