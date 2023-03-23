@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>ru.kata</groupId>
-	<artifactId>pp_3_1_4_bootstrap</artifactId>
+	<artifactId>pp_3_1_5_rest</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>pp_3_1_4_bootstrap</name>
-	<description>pp_3_1_4_bootstrap</description>
+	<name>pp_3_1_5_rest</name>
+	<description>pp_3_1_5_rest</description>
 	<properties>
 		<java.version>17</java.version>
 	</properties>
